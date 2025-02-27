@@ -1,4 +1,4 @@
-# ![Ingenimax](/img/logo-header.svg#gh-light-mode-only) ![Ingenimax](/img/logo-header-inverted.svg#gh-dark-mode-only)
+# ![Ingenimax](/img/logo-header.png#gh-light-mode-only) ![Ingenimax](/img/logo-header-inverted.png#gh-dark-mode-only)
 
 # Conversational Agent
 
