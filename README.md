@@ -89,10 +89,6 @@ curl -X POST "http://localhost:8080/v1/agent/memory/import/:org_id/:user_id" \
 - [Zerolog](https://github.com/rs/zerolog) - Logging
 - [Viper](https://github.com/spf13/viper) - Configuration management
 
-## License
-
-[Your chosen license]
-
 ## Contributing
 
 [Your contribution guidelines]
