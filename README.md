@@ -2,47 +2,66 @@
 
 # Conversational Agent
 
-A robust conversational AI system built in Go that combines vector search capabilities with LLM-powered responses. The system supports organization-specific knowledge bases, conversation memory, and real-time streaming responses.
+A production-grade conversational AI agent built in Go that leverages Weaviate for vector search and OpenAI’s language models. Designed for enterprise applications, this multi-tenant agent provides tenant-specific knowledge retrieval, persistent conversation memory, and real-time response streaming.
+
+Ideal for customer support automation, knowledge management, and enterprise AI assistants, it enables seamless, context-aware conversations tailored to specific organizational needs.
 
 ## Features
 
-- **Dual-namespace Vector Search**: Searches both organization-specific and default knowledge bases
-- **Conversation Memory**: Maintains thread-based conversation history
-- **Streaming Support**: Real-time streaming of AI responses
-- **Document Management**: Import and manage knowledge base documents
-- **Organization Isolation**: Separate vector spaces for different organizations
-- **Robust Error Handling**: Graceful error handling and retries
-- **Efficient Memory Management**: Buffered message storage with automatic flushing
+- **Multi-Namespace Vector Search**: Searches both organization-specific and general knowledge bases to provide accurate and context-aware responses.
+- **Conversation Memory**: Maintains thread-based conversation history, ensuring continuity across user interactions and allowing persistent storage for long-term learning.
+- **Streaming Support**: Supports real-time streaming of AI-generated responses for a more interactive and responsive experience.
+- **Document Management**: Allows users to import and manage knowledge base documents with metadata, improving the AI agent’s contextual understanding.
+- **Organization Isolation**: Ensures tenant-specific knowledge separation, preventing data leakage between organizations or users.
+- **Buffered Message Storage**: Optimized memory management through automatic flushing to maintain performance and reduce system overhead.
+- **Metadata Filtering**: Enables fine-grained document queries using filters for user and organization IDs, improving retrieval accuracy.
 
 ## Architecture
 
-- **Agent Manager**: Core component managing LLM interactions and vector store operations
-- **Vector Store**: Weaviate-based vector database for efficient similarity search
-- **Memory System**: Thread-based conversation buffer with persistence
-- **REST API**: Echo-based HTTP server with streaming support
+- **Agent Manager**: The central logic engine that handles LLM interactions, query processing, and vector store operations.
+- **Vector Store**: A high-performance vector store (Weaviate) that enables efficient semantic search across organization-specific and general knowledge bases.
+- **Memory System**: Implements thread-based conversation persistence, storing previous exchanges to maintain conversational context.
+- **REST API**: A Go-based HTTP server that handles queries, document ingestion, and conversation retrieval, with support for response streaming.
+
+### Diagram
+![Diagram](/img/architecture_light.png#gh-light-mode-only) ![Diagram](/img/architecture_dark.png#gh-dark-mode-only)
 
 ## API Endpoints
 
-- `POST /v1/agent/query/:org_id/:user_id/:thread_id` - Submit queries and receive responses
-- `GET /v1/agent/memory/thread/:thread_id` - Retrieve conversation history
-- `POST /v1/agent/memory/update` - Add documents to the knowledge base
-- `POST /v1/agent/memory/import/:org_id/:user_id` - Bulk import documents
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/v1/agent/query/:org_id/:user_id/:thread_id` | Submit a query and retrieve an AI-generated response. |
+| `GET`  | `/v1/agent/memory/thread/:thread_id` | Retrieve a conversation's memory for a specific thread. |
+| `POST` | `/v1/agent/memory/update` | Add new knowledge base documents. |
+| `POST` | `/v1/agent/memory/import/:org_id/:user_id` | Bulk import documents for an organization and user. |
 
-## Setup
+## Installation
 
 1. Clone the repository
+    ```
+    https://github.com/Ingenimax/conversational-agent.git
+    cd conversational-agent
+    ```
+
 2. Create a `.env` file with the following variables:
+   ```
+   OPENAI_API_KEY=your_openai_api_key
+   OPENAI_MODEL=gpt-4o-mini
+   WEAVIATE_HOST=https://your_weaviate_host
+   WEAVIATE_API_KEY=your_weaviate_api_key
+   WEAVIATE_INDEX_NAME=your_index_name
+   DEBUG=true
+   ```
 
 3. Install dependencies:
-
-```bash
-go mod download
-```
+   ```bash
+   go mod tidy
+   ```
 
 4. Run the server:
-```bash
-go run cmd/main.go
-```
+   ```bash
+   go run cmd/main.go
+   ```
 
 ## Usage
 
@@ -57,7 +76,15 @@ curl -X POST "http://localhost:8080/v1/agent/query/:org_id/:user_id/:thread_id" 
   }'
 ```
 
-### Add Documents
+For streaming responses, set `"stream": true` in the request body.
+
+### Retrieve Conversation History
+
+```bash
+curl -X GET "http://localhost:8080/v1/agent/memory/thread/:thread_id"
+```
+
+### Add Document to Knowledge Base
 
 ```bash
 curl -X POST "http://localhost:8080/v1/agent/memory/update" \
@@ -81,6 +108,13 @@ curl -X POST "http://localhost:8080/v1/agent/memory/import/:org_id/:user_id" \
   }'
 ```
 
+## Key Components
+
+- **Agent Manager**: Manages LLM interactions, vector store operations, and memory
+- **Vector Store**: Weaviate storage for document embeddings with namespace support
+- **Memory System**: Thread-based conversation buffer with persistence
+- **Query Processing**: Combines organization-specific and default knowledge bases for comprehensive responses
+
 ## Dependencies
 
 - [Echo](https://echo.labstack.com/) - Web framework
@@ -88,7 +122,8 @@ curl -X POST "http://localhost:8080/v1/agent/memory/import/:org_id/:user_id" \
 - [Weaviate](https://weaviate.io/) - Vector database
 - [Zerolog](https://github.com/rs/zerolog) - Logging
 - [Viper](https://github.com/spf13/viper) - Configuration management
+- [OpenAI API](https://openai.com/) - LLM and embedding provider
 
 ## Contributing
 
-[Your contribution guidelines]
+Contributions are welcome! Please feel free to submit a Pull Request.
